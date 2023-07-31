@@ -1,88 +1,147 @@
 const userTab = document.querySelector("[data-userWeather]")
 const searchTab = document.querySelector("[data-searchWeather]")
+const userContainer = document.querySelector(".weather-container")
 
+const grantAccessContainer = document.querySelector(".grant-locationContainer")
+const searchForm = document.querySelector(".form-container")
+const loadingscreen = document.querySelector(".loadingContainer")
+const userInfoContainer = document.querySelector(".user-infoContainer")
 
-// const APIkey = 'e2093adb868645c1c5ff10d56bf719dc'
+// user data
+const cityName = document.querySelector("[data-cityName]")
+const countryName = document.querySelector("[data-countryIcon]")
+const Desc = document.querySelector("[data-weatherDesc]")
+const Icon = document.querySelector("[data-weatherIcon]")
+const temp = document.querySelector("[data-temp]")
+const windspeed = document.querySelector("[data-windspeed]")
+const humidity = document.querySelector("[data-humidity]")
+const cloud = document.querySelector("[data-cloudiness]")
 
-// function renderWeatherInfo(data){
-//   let temp = data?.main?.temp -273.15
-//   let newPara = document.createElement('p')
-//   newPara.textContent = `${temp.toFixed(2)} °C`
+// initial need
+const API_key = 'e2093adb868645c1c5ff10d56bf719dc'
+let currentTab = userTab
+currentTab.classList.add("current-tab")
 
-//   document.body.appendChild(newPara)
-// }
+// initial get location
+getFromSessionStorage()
 
-// async function featchWeatherDetail(){
-//   let lat = 15.3333;
-//   let lon = 74.0833;
-//   try {
-//     let city = 'korba'
+// switch between searchtab and user TAb
+function switchTab(clickedTab) {
+  if (clickedTab != currentTab) {
+    currentTab.classList.remove("current-tab")
+    currentTab = clickedTab
+    currentTab.classList.add("current-tab")
 
-//   const Response  = await fetch(`https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${APIkey}`)
-//   const data = await Response.json()
+    if (!searchForm.classList.contains("active")) {
+      userInfoContainer.classList.remove("active")
+      grantAccessContainer.classList.remove("active")
+      searchForm.classList.add("active")
+    }
+    else {
+      searchForm.classList.remove("active");
+      userInfoContainer.classList.remove("active");
+      getFromSessionStorage();
+    }
+  }
 
-//   // let data1 = data.name
-//   // console.log("weather data->",data1);
+}
 
-//   renderWeatherInfo(data)
+userTab.addEventListener('click', () => {
+  //pass the clicked tab as a parameter
+  switchTab(userTab)
+})
 
-//   }catch{
+searchTab.addEventListener('click', () => {
+  //pass the clicked tab as a parameter
+  switchTab(searchTab)
+})
 
-//   }
+// this funtion is use to store data in the local storage of your browser
+function getFromSessionStorage() {
+  const localCooridnates = sessionStorage.getItem('user-coordinates')
+  if (!localCooridnates) {
+    grantAccessContainer.classList.add('active')
+  } else {
+    const coordinates = JSON.parse(localCooridnates)
+    fetchUserWeatherInfo(coordinates)
+  }
+}
 
-// }
+// fetching weather Info from your location or the cordionated given to the funtion 
+async function fetchUserWeatherInfo(coordinates) {
+  const { lat, lon } = coordinates
+  grantAccessContainer.classList.remove('active')
+  loadingscreen.classList.add("active")
 
-// async function getCustomWeatherDetails(){
+  // API CALL
+  try {
+    let Response = await fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${API_key}`)
+    const data = await Response.json()
+    loadingscreen.classList.remove('active')
+    userInfoContainer.classList.add('active')
+    renderWeatherInfo(data)
+  } catch(error) {
+    console.log('There was an error', error);
+  }
+}
 
-//   try{
-//     let lat = 44.34;
-//     let lon = 10.99;
-  
-//     let result = await fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${APIkey}`)
-//     let data = await result.json()
-  
-  
-//     console.log(data);
-//   }catch(err){
-//     console.log("Error Found "+err);
-//   }
-// }
+// This funtion is used for rendering informatin into your user Tab
+function renderWeatherInfo(data) {
+  cityName.textContent = data?.name
+  countryName.src = `https://flagcdn.com/144x108/${data?.sys?.country.toLowerCase()}.png`
+  Desc.innerText = data?.weather?.[0]?.description
+  Icon.src = `https://openweathermap.org/img/wn/${data?.weather?.[0]?.icon}@2x.png`;
+  let temperature = data?.main?.temp- 273.15
+  temp.innerText = temperature.toFixed(2) 
+  windspeed.innerText = data?.wind?.speed
+  humidity.innerText = data?.main?.humidity
+  cloud.innerText = data?.clouds?.all
+}
 
-// function switchTab(clickedTab) {
+// in this funtion that ask permission to get your currrent location 
+const grantAccessButton = document.querySelector('[data-grantAccess]')
 
-//   apiErrorContainer.classList.remove("active");
+grantAccessButton.addEventListener('click', () => {
+  navigator.geolocation.watchPosition(showPosition,error);
+})
 
-//   if (clickedTab !== currentTab) {
-//     currentTab.classList.remove("current-tab");
-//     currentTab = clickedTab;
-//     currentTab.classList.add("current-tab");
+// if geoloaction throw an error
+function error(err) {
+  console.warn(`ERROR(${err.code}): ${err.message}`);
+}
 
-//     if (!searchForm.classList.contains("active")) {
-//       userInfoContainer.classList.remove("active");
-//       grantAccessContainer.classList.remove("active");
-//       searchForm.classList.add("active");
-//     } 
-//     else {
-//       searchForm.classList.remove("active");
-//       userInfoContainer.classList.remove("active");
-//       //getFromSessionStorage();
-//     }
+// function that take coordinate store in local Storage
+function showPosition(position) {
+  const userCoordinates = {
+    lat: position.coords.latitude,
+    lon: position.coords.longitude,
+  }
+  sessionStorage.setItem("user-coordinates", JSON.stringify(userCoordinates));
+  fetchUserWeatherInfo(userCoordinates)
+}
 
-//     // console.log("Current Tab", currentTab);
-//   }
-// }
+// this is a search form funtion for searching weather of a city
+searchInput = document.querySelector('[data-searchInput]')
+searchForm.addEventListener("submit", (e) => {
+  e.preventDefault();
+  if (searchInput.val === "") return
 
+  fetchSearchWeatherInfo(searchInput.value);
+})
 
+// fetcch weather using city
+async function fetchSearchWeatherInfo(city) {
+  loadingscreen.classList.add('active')
+  userInfoContainer.classList.remove('active')
+  grantAccessContainer.classList.remove('active')
 
-// function getLocation() {
-//   if (navigator.geolocation) {
-//     navigator.geolocation.getCurrentPosition(showPosition);
-//   } else {
-//     x.innerHTML = "Geolocation is not supported by this browser.";
-//   }
-// }
+  try {
+    let Response = await fetch(`https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${API_key}`)
+    const data = await Response.json()
+    loadingscreen.classList.remove('active')
+    userInfoContainer.classList.add('active')
+    renderWeatherInfo(data)
+  } catch {
 
-// function showPosition(position) {
-//   console.log( position.coords.latitude)
-//   console.log( position.coords.longitude)
-// }
+  }
+}

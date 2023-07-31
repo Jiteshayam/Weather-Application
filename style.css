@@ -43,3 +43,19 @@
   background-color: white;
   border-radius: 50%;
 }
+
+.tab{
+  cursor: pointer;
+}
+.current-tab{
+  background-color: rgba(219, 226, 239, 0.5);
+  border-radius: 4px;
+}
+
+.form-container{
+  scale: 0;
+}
+
+.active{
+  scale: 1;
+}
