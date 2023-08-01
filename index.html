@@ -1,93 +1,125 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title></title>
-    <meta name="description" content="">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="style.css">
-  </head>
-  <body>
-    
-    <div class="wrapper">
-      <h1>Weather App</h1>
 
-      <div class="tab-container">
-        <p class="tab" data-userWeather>Your Weather</p>
-        <p class="tab" data-searchWeather>Search Weather</p>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title></title>
+  <meta name="description" content="">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+  <div class="wrapper">
+    <div class="nav">
+      <input type="checkbox" id="nav-check">
+      <div class="nav-btn">
+        <label for="nav-check">
+          <span></span>
+          <span></span>
+          <span></span>
+        </label>
       </div>
 
-      <div class="weather-container">
-
-        <!-- grant location container -->
-        <div class="grant-locationContainer">
-          <img src="./assets/icons8-location-64.png" width="80" height="80" loading="lazy" alt="">
-          <p>grant Location Access</p>
-          <p>Allow access to get weather Information</p>
-          <button class="btn" data-grantAccess>Grant Access</button>
-        </div>
-
-        <!-- search form -->
-        <form action="" class="form-container" data-searchForm>
-          <input type="text" name="" id="" data-searchInput placeholder="Search for the city...">
-          <button class="btn">
-            <img src="./assets/icons8-search.svg" alt="">
-          </button>
-        </form>
-
-        <!-- loding screen container -->
-        <div class="loadingContainer">
-          <!-- GRADIENT SPINNER -->
-          <div class="spinner-box">
-            <div class="circle-border">
-              <div class="circle-core"></div>
-            </div>  
+      <div class="nav-links">
+        <a class="tab child1" data-userWeather>Your Weather</a>
+        <a class="tab child2" data-searchWeather>Search Weather</a>
+        <a class="child3">
+          <div class="select" onchange="chooseLang()">
+            <select mySelect>
+              <option value="af">Afrikaans</option>
+              <option value="hi">Hindi</option>
+              <option value="en" selected>English</option>
+            </select>
           </div>
-          <p>loading</p>
+        </a>
+      </div>
+    </div>
+    <!-- <div class="dot"></div> -->
+    <img class="logo" src="./assets/season.png" alt="" width="30px" height="30px">
+    <h1>Weather App</h1>
+
+    <div class="weather-container">
+
+      <!-- grant location container -->
+      <div class="sub-container grant-locationContainer">
+        <img src="./assets/icons8-location-64.png" width="80" height="80" loading="lazy" alt="">
+        <p>grant Location Access</p>
+        <p>Allow access to get weather Information</p>
+        <button class="btn" data-grantAccess>Grant Access</button>
+      </div>
+
+      <!-- search form -->
+      <form action="" class="form-container" data-searchForm>
+        <input type="text" name="" id="" data-searchInput placeholder="Search for the city...">
+        <button class="btn">
+          <img src="./assets/icons8-search.svg" alt="">
+        </button>
+      </form>
+
+      <!-- loding screen container -->
+      <div class="sub-container loadingContainer">
+        <!-- GRADIENT SPINNER -->
+        <div class="spinner-box">
+          <div class="circle-border">
+            <div class="circle-core"></div>
+          </div>
         </div>
+        <p>loading</p>
+      </div>
 
-        <!-- show weather info -->
-        <div class="user-infoContainer">
+      <!-- show weather info -->
+      <div class="user-infoContainer sub-container">
+        <div class="user-infoContainerGrid">
+          <div class="left card1">
+            <div class="name">
+              <p data-cityName></p>
+              <img data-countryIcon>
+            </div>
 
-          <div class="name">
-            <p data-cityName></p>
-            <img data-countryIcon>
+            <div class="weather-temp">
+              <img data-weatherIcon>
+              <p data-temp></p>
+            </div>
+            <p data-weatherDesc></p>
           </div>
 
-          <p data-weatherDesc></p>
-          <img data-weatherIcon>
-          <p data-temp></p>
-
-          
-          <div class="weather-card">
-            
-            <div class="card">
-              <img src="./assets/wind.png" alt="">
-              <p>Windspeed</p>
+            <div class="card card2">
+              <div>
+                <img src="./assets/wind.png" alt="">
+                <p>Windspeed</p>
+              </div>
               <p data-windspeed></p>
             </div>
-            
-            <div class="card">
-              <img src="./assets/humidity.png" alt="">
-              <p>Humidity</p>
+
+            <div class="card card3">
+              <div>
+                <img src="./assets/humidity.png" alt="">
+                <p>Humidity</p>
+              </div>
               <p data-humidity></p>
             </div>
-            
-            <div class="card">
-              <img src="./assets/cloud.png" alt="">
-              <p>Cloud</p>
+
+            <div class="card card4">
+              <div>
+                <img src="./assets/cloud.png" alt="">
+                <p>Cloud</p>
+              </div>
               <p data-cloudiness></p>
             </div>
-            
-          </div>
+
         </div>
-
-
       </div>
+
 
     </div>
 
-    <script src="index.js" async defer></script>
-  </body>
+  </div>
+
+  <script src="index.js" async defer></script>
+</body>
+
 </html>

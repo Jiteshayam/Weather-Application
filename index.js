@@ -16,11 +16,26 @@ const temp = document.querySelector("[data-temp]")
 const windspeed = document.querySelector("[data-windspeed]")
 const humidity = document.querySelector("[data-humidity]")
 const cloud = document.querySelector("[data-cloudiness]")
+const lang = document.querySelector("[mySelect]");
+
+var nav = document.querySelector("#nav-check");
 
 // initial need
 const API_key = 'e2093adb868645c1c5ff10d56bf719dc'
 let currentTab = userTab
 currentTab.classList.add("current-tab")
+language = 'en'
+
+function chooseLang() {
+  var i = lang.selectedIndex;
+  language = lang.options[i].value;
+  nav.checked = false
+  if (currentTab != userTab) {
+    fetchSearchWeatherInfo(searchInput.value)
+  }else{
+    getFromSessionStorage()
+  }
+}
 
 // initial get location
 getFromSessionStorage()
@@ -43,6 +58,8 @@ function switchTab(clickedTab) {
       getFromSessionStorage();
     }
   }
+  nav.checked = false
+
 
 }
 
@@ -71,11 +88,12 @@ function getFromSessionStorage() {
 async function fetchUserWeatherInfo(coordinates) {
   const { lat, lon } = coordinates
   grantAccessContainer.classList.remove('active')
+  userInfoContainer.classList.remove('active')
   loadingscreen.classList.add("active")
 
   // API CALL
   try {
-    let Response = await fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${API_key}`)
+    let Response = await fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${API_key}&lang=${language}`)
     const data = await Response.json()
     loadingscreen.classList.remove('active')
     userInfoContainer.classList.add('active')
@@ -92,10 +110,10 @@ function renderWeatherInfo(data) {
   Desc.innerText = data?.weather?.[0]?.description
   Icon.src = `https://openweathermap.org/img/wn/${data?.weather?.[0]?.icon}@2x.png`;
   let temperature = data?.main?.temp- 273.15
-  temp.innerText = temperature.toFixed(2) 
-  windspeed.innerText = data?.wind?.speed
-  humidity.innerText = data?.main?.humidity
-  cloud.innerText = data?.clouds?.all
+  temp.innerText = `${temperature.toFixed(2)}°C` 
+  windspeed.innerText = `${data?.wind?.speed}m/s`
+  humidity.innerText = `${data?.main?.humidity}%`
+  cloud.innerText = `${data?.clouds?.all}%`
 }
 
 // in this funtion that ask permission to get your currrent location 
@@ -131,17 +149,22 @@ searchForm.addEventListener("submit", (e) => {
 
 // fetcch weather using city
 async function fetchSearchWeatherInfo(city) {
+  if (searchInput.val === "") return
   loadingscreen.classList.add('active')
+  searchForm.classList.add('active3')
   userInfoContainer.classList.remove('active')
   grantAccessContainer.classList.remove('active')
-
+  
   try {
-    let Response = await fetch(`https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${API_key}`)
+    let Response = await fetch(`https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${API_key}&lang=${language}`)
     const data = await Response.json()
     loadingscreen.classList.remove('active')
     userInfoContainer.classList.add('active')
+    searchForm.classList.remove('active3')
+    searchForm.classList.add('active2')
     renderWeatherInfo(data)
   } catch {
 
   }
 }
+
