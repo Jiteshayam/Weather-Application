@@ -36,9 +36,9 @@ function chooseLang() {
     getFromSessionStorage()
   }
 }
+getFromSessionStorage()
 
 // initial get location
-getFromSessionStorage()
 
 // switch between searchtab and user TAb
 function switchTab(clickedTab) {
@@ -46,11 +46,13 @@ function switchTab(clickedTab) {
     currentTab.classList.remove("current-tab")
     currentTab = clickedTab
     currentTab.classList.add("current-tab")
+    errorlogo.classList.remove('active')
 
     if (!searchForm.classList.contains("active")) {
       userInfoContainer.classList.remove("active")
       grantAccessContainer.classList.remove("active")
       searchForm.classList.add("active")
+
     }
     else {
       searchForm.classList.remove("active");
@@ -78,6 +80,7 @@ function getFromSessionStorage() {
   const localCooridnates = sessionStorage.getItem('user-coordinates')
   if (!localCooridnates) {
     grantAccessContainer.classList.add('active')
+    console.log('sdf');
   } else {
     const coordinates = JSON.parse(localCooridnates)
     fetchUserWeatherInfo(coordinates)
@@ -147,24 +150,33 @@ searchForm.addEventListener("submit", (e) => {
   fetchSearchWeatherInfo(searchInput.value);
 })
 
+
+const errorlogo = document.querySelector('[error]')
 // fetcch weather using city
 async function fetchSearchWeatherInfo(city) {
-  if (searchInput.val === "") return
+  if (searchInput.value === "") return
   loadingscreen.classList.add('active')
   searchForm.classList.add('active3')
   userInfoContainer.classList.remove('active')
   grantAccessContainer.classList.remove('active')
+  errorlogo.classList.remove('active')
   
   try {
-    let Response = await fetch(`https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${API_key}&lang=${language}`)
+    const Response = await fetch(`https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${API_key}&lang=${language}`)
     const data = await Response.json()
-    loadingscreen.classList.remove('active')
+    if (data?.cod==404){
+      throw data
+    }
     userInfoContainer.classList.add('active')
     searchForm.classList.remove('active3')
     searchForm.classList.add('active2')
+    loadingscreen.classList.remove('active')
     renderWeatherInfo(data)
-  } catch {
-
+  } catch(err){
+    loadingscreen.classList.remove('active')
+    console.log("Error Found",err);
+    searchForm.classList.add('active4')
+    errorlogo.classList.add('active')
   }
 }
 

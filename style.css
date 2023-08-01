@@ -300,7 +300,7 @@ option:hover{
 }
 
 .grant-locationContainer.active{
-  /* display: flex; */
+  display: flex;  
 }
 
 .grant-locationContainer p:first-of-type{
@@ -437,6 +437,10 @@ option:hover{
   transform: unset;
   transform: translateY(-159px);
 }
+.form-container.active4{
+  transform: unset;
+  transform: translateY(-5px);
+}
 
 .form-container input{
   all:unset;
@@ -482,7 +486,12 @@ option:hover{
   text-transform: uppercase;
 }
 
+.error{
+  display: none;
+}
 
-
+.error.active{
+  display: flex;
+}
 
 
