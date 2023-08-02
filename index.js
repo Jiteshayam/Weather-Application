@@ -47,6 +47,7 @@ function switchTab(clickedTab) {
     currentTab = clickedTab
     currentTab.classList.add("current-tab")
     errorlogo.classList.remove('active')
+    otherError.classList.remove('active')
 
     if (!searchForm.classList.contains("active")) {
       userInfoContainer.classList.remove("active")
@@ -80,13 +81,15 @@ function getFromSessionStorage() {
   const localCooridnates = sessionStorage.getItem('user-coordinates')
   if (!localCooridnates) {
     grantAccessContainer.classList.add('active')
-    console.log('sdf');
   } else {
     const coordinates = JSON.parse(localCooridnates)
     fetchUserWeatherInfo(coordinates)
   }
 }
 
+const otherError=document.querySelector('[Othererror]')
+const errorCod=document.querySelector('[errorCod]')
+const errorMsg=document.querySelector('[errorMsg]')
 // fetching weather Info from your location or the cordionated given to the funtion 
 async function fetchUserWeatherInfo(coordinates) {
   const { lat, lon } = coordinates
@@ -98,10 +101,17 @@ async function fetchUserWeatherInfo(coordinates) {
   try {
     let Response = await fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${API_key}&lang=${language}`)
     const data = await Response.json()
+    if (data?.cod==400 || data.cod==404){
+      throw data
+    }
     loadingscreen.classList.remove('active')
     userInfoContainer.classList.add('active')
     renderWeatherInfo(data)
   } catch(error) {
+    loadingscreen.classList.remove('active')
+    otherError.classList.add('active')
+    errorCod.innerText = (error?.cod)
+    errorMsg.innerText = (error?.message)
     console.log('There was an error', error);
   }
 }
