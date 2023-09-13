@@ -47,7 +47,6 @@ function switchTab(clickedTab) {
     currentTab = clickedTab
     currentTab.classList.add("current-tab")
     errorlogo.classList.remove('active')
-    otherError.classList.remove('active')
 
     if (!searchForm.classList.contains("active")) {
       userInfoContainer.classList.remove("active")

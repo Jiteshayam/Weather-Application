@@ -6,6 +6,10 @@
   --hovercolordark:#185d4f;
 }
 
+.a{
+  text-decoration: none;
+}
+
 * {
   margin: 0;
   padding: 0;
